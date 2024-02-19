@@ -1,0 +1,239 @@
+body {
+    font-family: 'Lato', sans-serif;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 600px;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    margin: 20px;
+}
+
+.form-container,
+.additional-content {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 40px;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #007BFF;
+}
+
+label {
+    display: block;
+    margin: 20px 0 15px;
+}
+
+input {
+    width: 100%;
+    padding: 20px;
+    margin: 15px 0;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+}
+
+button {
+    width: 100%;
+    padding: 20px;
+    margin: 25px 0;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#switchForm {
+    margin-top: 40px;
+    cursor: pointer;
+    color: #007BFF;
+    text-decoration: underline;
+}
+
+.additional-content {
+    display: none;
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+}
+
+.profile-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #ccc;
+    /* You can set a background image here for the profile picture */
+    margin-right: 10px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    color: #333;
+}
+
+.action-icons {
+    display: flex;
+}
+
+.search-icon,
+.inbox-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #007BFF;
+    margin-right: 15px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: #fff;
+    font-size: 18px;
+    /* Adjust the font size as needed */
+}
+
+.icon {
+    width: 25px;
+}
+
+.icon-container {
+    text-align: center;
+}
+
+.action-icons p {
+    position: relative;
+    top: 35px;
+    right: 60px;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-modal {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.search-modal input {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.search-modal button {
+    padding: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.search-modal .close-btn {
+    color: #007BFF;
+    cursor: pointer;
+}
+
+#searchResults {
+    list-style-type: none;
+    position: relative;
+    right: 1000px;
+
+}
+
+.conversation-container {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    max-height: 80vh;
+    /* Adjust as needed */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    z-index: 1000;
+    /* Make it appear on top of other elements */
+}
+
+.header {
+    background-color: #f2f2f2;
+    padding: 10px;
+    text-align: center;
+}
+
+.message-history {
+    padding: 10px;
+    overflow-y: auto;
+    max-height: 60vh;
+    /* Adjust as needed */
+}
+
+.message-input {
+    padding: 10px;
+    display: flex;
+}
+
+.message-input input {
+    flex: 1;
+    padding: 5px;
+}
+
+.message-input button {
+    padding: 5px;
+    margin-left: 5px;
+}
+
+#sendButton {
+    width: 100px;
+    height: 50px;
+}
+
+#back {
+    width: 100px;
+    position: relative;
+    right: 700px;
+    bottom: 100px;
+}
+#ul{
+    list-style-type: none;
+}

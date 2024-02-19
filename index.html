@@ -1,0 +1,102 @@
+<html>
+
+<head>
+    <title>Chat Conversation</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="main.js"></script>
+</head>
+
+</html>
+
+<body>
+    <div class="container" id="mainContainer">
+        <!-- Login and Signup Forms -->
+        <div class="form-container" id="loginForm">
+            <form>
+                <h1>Login</h1>
+                <label for="loginId">ID:</label>
+                <input type="text" id="loginId" name="loginId" required>
+                <label for="loginName">Name:</label>
+                <input type="text" id="loginName" name="loginName" required>
+                <label for="loginSurname">Surname:</label>
+                <input type="text" id="loginSurname" name="loginSurname" required>
+                <button type="submit" id="loginButton" onclick="main(event)">Login</button>
+                <p id="switchForm">Don't have an account? <span onclick="toggleForm()">Signup</span></p>
+            </form>
+        </div>
+
+        <div class="form-container" id="signupForm" style="display: none;">
+            <form>
+                <h1>Sign Up</h1>
+                <form>
+                    <label for="signupId">ID:</label>
+                    <input type="text" id="signupId" name="signupId" required>
+                    <label for="signupName">Name:</label>
+                    <input type="text" id="signupName" name="signupName" required>
+                    <label for="signupSurname">Surname:</label>
+                    <input type="text" id="signupSurname" name="signupSurname" required>
+                    <button type="submit" id="signupButton" onclick="main(event)">Sign Up</button>
+                    <p id="switchForm">Already have an account? <span onclick="toggleForm()">Login</span></p>
+                </form>
+        </div>
+        <div class="additional-content" id="additionalContent" style="display: none;">
+            <div class="profile-section">
+                <div class="profile-picture"></div>
+                <div class="user-info">
+                    <p>ID: <span id="loggedInId"></span></p>
+                    <p>Name: <span id="loggedInName"></span></p>
+                    <p>Surname: <span id="loggedInSurname"></span></p>
+                </div>
+            </div>
+            <div class="action-icons">
+                <div class="search-icon" onclick="openSearch()">
+                    <img src="search-icon.webp" class="icon" alt="">
+                </div>
+                <p>Search</p>
+                <div class="inbox-icon" onclick="openInbox()">
+                    <img src="1159627.png" class="icon" alt="">
+                </div>
+                <p>Inbox</p>
+            </div>
+            <div id="searchOverlay" class="overlay" style="display: none;">
+                <div class="search-modal">
+                    <input type="text" id="searchInput" placeholder="Type your search...">
+                    <button onclick="searchButton()">Search</button>
+                    <span class="close-btn" onclick="closeSearchButton()">Close</span>
+
+                    <ul id="searchResults"></ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="conversation-container" id="conversationContainer" style="display: none;">
+        <div class="header">
+            <h2 id="conversationUserName"></h2>
+            <button id="back" onclick="back()">Back</button>
+        </div>
+        <div class="message-history" id="messageHistory">
+            <ul id="ul">
+            </ul>
+        </div>
+        <div class="message-input">
+            <input type="text" id="messageInput" placeholder="Type your message...">
+            <button onclick="sendMessage()" id="sendButton">Send</button>
+        </div>
+    </div>
+    <script>
+        function toggleForm() {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            if (loginForm.style.display === 'block') {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+            } else {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>

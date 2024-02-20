@@ -93,7 +93,7 @@ function main(event) {
 }
 function openInbox() {
     document.getElementById("additionalContent").style.display = 'none';
-    document.getElementById("inboxOverlay ").style.display = 'block';
+    document.getElementById("inboxOverlay").style.display = 'block';
 }
 function openSearch() {
     document.getElementById("searchOverlay").style.display = 'block';

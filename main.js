@@ -143,6 +143,7 @@ function startConversation(idOfPersonYouWantToStartConversation) {
             count = 1;
         }
     } else {
+        let arrayForInboxClass = [];
         inboxArray.push(new Inbox(peopleArray[currentUser].getName(), peopleArray[findTheUserYouWantToSendMessageIndex].getName(), arrayForInboxClass));
     }
 }

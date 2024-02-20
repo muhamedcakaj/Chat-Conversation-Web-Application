@@ -1,5 +1,5 @@
 class User {
-    constructor(id, name, surname, inboxPersonArray) {
+    constructor(id, name, surname, inboxPersonArray = []) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -16,10 +16,13 @@ class User {
         return this.surname;
     }
     getInboxPersonArray() {
-        return this.getInboxPersonArray;
+        return this.inboxPersonArray;
     }
     addElementToInboxPersonArray(element) {
-        this.inboxPersonArray.push = element;
+        this.inboxPersonArray.push(element);
+    }
+    saveInboxMessagesToLocal() {
+        localStorage.setItem('inboxPersonArray_' + this.getId(), JSON.stringify(this.inboxPersonArray));
     }
 }
 class Inbox {
@@ -86,7 +89,8 @@ function main(event) {
             alert("The user does't exists please sing up and try again");
         }
     } else if (signupId) {
-        peopleArray.push(new User(signupId, signupName, signupSurname));
+        let inboxPersonArray = [];
+        peopleArray.push(new User(signupId, signupName, signupSurname, inboxPersonArray));
         saveDataToLocal()
         alert("Log in again to get to the Main Page");
     }
@@ -94,6 +98,20 @@ function main(event) {
 function openInbox() {
     document.getElementById("additionalContent").style.display = 'none';
     document.getElementById("inboxOverlay").style.display = 'block';
+    let currentUserIndex = findUserIndexInArray(document.getElementById("loggedInId").textContent);
+    let arrayOfUser = peopleArray[currentUserIndex].getInboxPersonArray();
+    console.log(arrayOfUser);
+    for (let i = 0; i < arrayOfUser.length; i++) {
+        let button = document.createElement("button");
+        button.textContent = "Chat";
+        button.id = arrayOfUser[i];
+
+        let li = document.createElement('li');
+        li.textContent = arrayOfUser[i];
+        li.appendChild(button);
+        let ul = document.getElementById("inboxList");
+        ul.appendChild(li);
+    }
 }
 function openSearch() {
     document.getElementById("searchOverlay").style.display = 'block';
@@ -147,7 +165,6 @@ function startConversation(idOfPersonYouWantToStartConversation) {
             li.textContent = inboxArrayFromClassInbox[i];
             let ul = document.getElementById("ul");
             ul.appendChild(li);
-            count = 1;
         }
     } else {
         let arrayForInboxClass = [];
@@ -177,6 +194,10 @@ function sendMessage() {
 
     document.getElementById("messageInput").innerHTML = "";
 
+    peopleArray[findTheUserYouWantToSendMessageIndex].addElementToInboxPersonArray(peopleArray[currentUser].getName() + " " + peopleArray[currentUser].getSurname());
+    peopleArray[findTheUserYouWantToSendMessageIndex].saveInboxMessagesToLocal();
+    peopleArray[currentUser].addElementToInboxPersonArray(peopleArray[findTheUserYouWantToSendMessageIndex].getName() + " " + peopleArray[findTheUserYouWantToSendMessageIndex].getSurname());
+    peopleArray[currentUser].saveInboxMessagesToLocal();
 }
 function back() {
     document.getElementById("conversationContainer").style.display = 'none';
@@ -234,18 +255,26 @@ function hourAndMinutes() {
 //Saving the person info in web storage=========================================================================================================================================================
 function saveDataToLocal() {
     localStorage.setItem('peopleData', JSON.stringify(peopleArray));
+
+    peopleArray.forEach(user => {
+        localStorage.setItem(`inboxPersonArray_${user.getId()}`, JSON.stringify(user.getInboxPersonArray()));
+    });
 }
 function loadDataFromLocal() {
     const storedData = localStorage.getItem('peopleData');
 
     if (storedData) {
-        // Parse the JSON string back into an array of plain objects
         const retrievedArray = JSON.parse(storedData);
 
-        // Convert the plain objects into instances of the Person class
         peopleArray.length = 0;
         retrievedArray.forEach(item => {
-            peopleArray.push(new User(item.id, item.name, item.surname, item.inboxPersonArray));
+            const user = new User(item.id, item.name, item.surname, item.inboxPersonArray);
+            // Load inboxPersonArray directly
+            const storedInboxPersonArray = localStorage.getItem('inboxPersonArray_' + user.getId());
+            if (storedInboxPersonArray) {
+                user.inboxPersonArray = JSON.parse(storedInboxPersonArray);
+            }
+            peopleArray.push(user);
         });
     }
 }

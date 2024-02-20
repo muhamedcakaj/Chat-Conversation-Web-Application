@@ -70,6 +70,15 @@
         </div>
 
     </div>
+    <div id="inboxOverlay" class="overlay" style="display: none;">
+        <div class="inbox-modal">
+            <button onclick="closeInbox()">Back</button>
+            <h1>Inbox</h1>
+            <ul id="inboxList">
+                <!-- LI items will be dynamically added here -->
+            </ul>
+        </div>
+    </div>
     <div class="conversation-container" id="conversationContainer" style="display: none;">
         <div class="header">
             <h2 id="conversationUserName"></h2>
@@ -84,10 +93,7 @@
             <button onclick="sendMessage()" id="sendButton">Send</button>
         </div>
     </div>
-    <div class="inbox-container">
-        <h1>Inbox</h1>
-        <ul id="inboxList"></ul>
-    </div>
+
     <script>
         function toggleForm() {
             const loginForm = document.getElementById('loginForm');

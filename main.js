@@ -1,8 +1,9 @@
 class User {
-    constructor(id, name, surname) {
+    constructor(id, name, surname, inboxPersonArray) {
         this.id = id;
         this.name = name;
         this.surname = surname;
+        this.inboxPersonArray = inboxPersonArray;
     }
     getId() {
         return this.id;
@@ -13,6 +14,12 @@ class User {
 
     getSurname() {
         return this.surname;
+    }
+    getInboxPersonArray() {
+        return this.getInboxPersonArray;
+    }
+    addElementToInboxPersonArray(element) {
+        this.inboxPersonArray.push = element;
     }
 }
 class Inbox {
@@ -56,7 +63,6 @@ class Inbox {
 }
 const peopleArray = [];
 const inboxArray = [];
-var count = 0;//this will help us to print the messages only once when we view the conversation,not to print the excat same messages twice ore more
 function main(event) {
     event.preventDefault();
     var loginId = document.getElementById("loginId").value;
@@ -174,7 +180,6 @@ function sendMessage() {
 function back() {
     document.getElementById("conversationContainer").style.display = 'none';
     document.getElementById("additionalContent").style.display = 'block';
-    count = 0;
 }
 
 function checkIfUserExistInArray(personId) {
@@ -239,7 +244,7 @@ function loadDataFromLocal() {
         // Convert the plain objects into instances of the Person class
         peopleArray.length = 0;
         retrievedArray.forEach(item => {
-            peopleArray.push(new User(item.id, item.name, item.surname));
+            peopleArray.push(new User(item.id, item.name, item.surname, item.inboxPersonArray));
         });
     }
 }

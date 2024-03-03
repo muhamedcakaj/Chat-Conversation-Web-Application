@@ -19,7 +19,7 @@ class User {
         return this.inboxPersonArray;
     }
     addElementToInboxPersonArray(element) {
-        if (!(this.addElementToInboxPersonArray.includes(element))) {
+        if (!(this.inboxPersonArray.includes(element))) {
             this.inboxPersonArray.push(element);
         }
     }
@@ -66,6 +66,8 @@ class Inbox {
         }
     }
 }
+loadDataFromLocal2();
+loadDataFromLocal();
 const peopleArray = [];
 const inboxArray = [];
 function main(event) {
@@ -105,10 +107,14 @@ function openInbox() {
     for (let i = 0; i < arrayOfUser.length; i++) {
         let elementAlreadyExists = Array.from(document.getElementById("inboxList").children).some(li => li.id.trim() == arrayOfUser[i]);
         if (!(elementAlreadyExists)) {
+            let splitarrayOfUserElement = arrayOfUser[i].split(" ");
+            let findUserIndexInArrayWithNameAndSurnamee = findUserIndexInArrayWithNameAndSurname(splitarrayOfUserElement[0], splitarrayOfUserElement[1]);
             let button = document.createElement("button");
             button.textContent = "Chat";
-            button.id = arrayOfUser[i];
-
+            button.id = peopleArray[findUserIndexInArrayWithNameAndSurnamee].getId();
+            button.onclick = function () {
+                chat(button.id);
+            }
             let li = document.createElement('li');
             li.textContent = arrayOfUser[i];
             li.id = arrayOfUser[i]
@@ -117,6 +123,15 @@ function openInbox() {
             ul.appendChild(li);
         }
     }
+}
+function closeInbox() {
+    document.getElementById("inboxOverlay").style.display = 'none';
+    document.getElementById("additionalContent").style.display = 'block';
+}
+function chat(idOfThePersonIWantToChat) {
+    document.getElementById("inboxOverlay").style.display = "none";
+    document.getElementById("conversationContainer").style.display = "block";
+    startConversation(idOfThePersonIWantToChat);
 }
 function openSearch() {
     document.getElementById("searchOverlay").style.display = 'block';
@@ -162,21 +177,21 @@ function startConversation(idOfPersonYouWantToStartConversation) {
     document.getElementById("conversationUserName").innerHTML = peopleArray[userYouWantToStartConversationIndexInArray].getName() + " " + peopleArray[userYouWantToStartConversationIndexInArray].getSurname();
     //Showing message history below code
     let currentUser = findUserIndexInArray(document.getElementById("loggedInId").textContent);
-    let userIWantToSendMessageNameSurname = document.getElementById("conversationUserName").textContent;
-    let split = userIWantToSendMessageNameSurname.split(" ");
-    let findTheUserYouWantToSendMessageIndex = findUserIndexInArrayWithNameAndSurname(split[0], split[1]);
-    if (inboxArrayExists(peopleArray[currentUser].getName(), peopleArray[findTheUserYouWantToSendMessageIndex].getName())) {
-        let inboxArrayIndex = findInboxArrayIndex(peopleArray[currentUser].getName(), peopleArray[findTheUserYouWantToSendMessageIndex].getName());
+    if (inboxArrayExists(peopleArray[currentUser].getName(), peopleArray[userYouWantToStartConversationIndexInArray].getName())) {
+        let inboxArrayIndex = findInboxArrayIndex(peopleArray[currentUser].getName(), peopleArray[userYouWantToStartConversationIndexInArray].getName());
         let inboxArrayFromClassInbox = inboxArray[inboxArrayIndex].getInboxMessagesArray();
         for (let i = 0; i < inboxArrayFromClassInbox.length; i++) {
-            let li = document.createElement('li');
-            li.textContent = inboxArrayFromClassInbox[i];
-            let ul = document.getElementById("ul");
-            ul.appendChild(li);
+            let elementAlreadyExists = Array.from(document.getElementById("ul").children).some(li => li.textContent.trim() == inboxArrayFromClassInbox[i]);
+            if (!(elementAlreadyExists)) {
+                let li = document.createElement('li');
+                li.textContent = inboxArrayFromClassInbox[i];
+                let ul = document.getElementById("ul");
+                ul.appendChild(li);
+            }
         }
     } else {
         let arrayForInboxClass = [];
-        inboxArray.push(new Inbox(peopleArray[currentUser].getName(), peopleArray[findTheUserYouWantToSendMessageIndex].getName(), arrayForInboxClass));
+        inboxArray.push(new Inbox(peopleArray[currentUser].getName(), peopleArray[userYouWantToStartConversationIndexInArray].getName(), arrayForInboxClass));
     }
 }
 function sendMessage() {
@@ -207,11 +222,21 @@ function sendMessage() {
     peopleArray[currentUser].addElementToInboxPersonArray(peopleArray[findTheUserYouWantToSendMessageIndex].getName() + " " + peopleArray[findTheUserYouWantToSendMessageIndex].getSurname());
     peopleArray[currentUser].saveInboxMessagesToLocal();
 }
+function back() {
+    document.getElementById("conversationContainer").style.display = 'none';
+    document.getElementById("additionalContent").style.display = 'block';
+    document.getElementById("searchOverlay").style.display = 'none';
+    let unorderedList = document.getElementById("ul");
+
+    while (unorderedList.firstChild) {
+        unorderedList.removeChild(unorderedList.firstChild);
+    }
+}
+
 function closeInbox() {
     document.getElementById("inboxOverlay").style.display = 'none';
     document.getElementById("additionalContent").style.display = 'block';
 }
-
 function checkIfUserExistInArray(personId) {
     for (let i of peopleArray) {
         if (i.getId() == personId) {

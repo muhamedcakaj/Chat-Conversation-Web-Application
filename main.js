@@ -19,7 +19,9 @@ class User {
         return this.inboxPersonArray;
     }
     addElementToInboxPersonArray(element) {
-        this.inboxPersonArray.push(element);
+        if (!(this.addElementToInboxPersonArray.includes(element))) {
+            this.inboxPersonArray.push(element);
+        }
     }
     saveInboxMessagesToLocal() {
         localStorage.setItem('inboxPersonArray_' + this.getId(), JSON.stringify(this.inboxPersonArray));
@@ -100,17 +102,20 @@ function openInbox() {
     document.getElementById("inboxOverlay").style.display = 'block';
     let currentUserIndex = findUserIndexInArray(document.getElementById("loggedInId").textContent);
     let arrayOfUser = peopleArray[currentUserIndex].getInboxPersonArray();
-    console.log(arrayOfUser);
     for (let i = 0; i < arrayOfUser.length; i++) {
-        let button = document.createElement("button");
-        button.textContent = "Chat";
-        button.id = arrayOfUser[i];
+        let elementAlreadyExists = Array.from(document.getElementById("inboxList").children).some(li => li.id.trim() == arrayOfUser[i]);
+        if (!(elementAlreadyExists)) {
+            let button = document.createElement("button");
+            button.textContent = "Chat";
+            button.id = arrayOfUser[i];
 
-        let li = document.createElement('li');
-        li.textContent = arrayOfUser[i];
-        li.appendChild(button);
-        let ul = document.getElementById("inboxList");
-        ul.appendChild(li);
+            let li = document.createElement('li');
+            li.textContent = arrayOfUser[i];
+            li.id = arrayOfUser[i]
+            li.appendChild(button);
+            let ul = document.getElementById("inboxList");
+            ul.appendChild(li);
+        }
     }
 }
 function openSearch() {
@@ -129,20 +134,23 @@ function searchButton() {
     let unorderedList = document.getElementById("searchResults");
 
     for (let i of peopleArray) {
-        if (i.getName().toLowerCase().includes(theNameToBeSearched.toLowerCase())) {
-            let startConversationButton = document.createElement("button");
-            startConversationButton.type = "submit";
-            startConversationButton.textContent = "Start Conversation";
-            startConversationButton.id = i.getId();
-            startConversationButton.onclick = function () {
-                startConversation(startConversationButton.id);
-            }
-            let listItem = document.createElement("li");
-            listItem.id = i.getId();
-            listItem.textContent = i.getName() + " " + i.getSurname();
-            listItem.appendChild(startConversationButton);
+        let elementAlreadyExists = Array.from(document.getElementById("searchResults").children).some(li => li.id.trim() == i.getId());
+        if (!(elementAlreadyExists)) {
+            if (i.getName().toLowerCase().includes(theNameToBeSearched.toLowerCase())) {
+                let startConversationButton = document.createElement("button");
+                startConversationButton.type = "submit";
+                startConversationButton.textContent = "Start Conversation";
+                startConversationButton.id = i.getId();
+                startConversationButton.onclick = function () {
+                    startConversation(startConversationButton.id);
+                }
+                let listItem = document.createElement("li");
+                listItem.id = i.getId();
+                listItem.textContent = i.getName() + " " + i.getSurname();
+                listItem.appendChild(startConversationButton);
 
-            unorderedList.appendChild(listItem);
+                unorderedList.appendChild(listItem);
+            }
         }
     }
 }
@@ -199,8 +207,8 @@ function sendMessage() {
     peopleArray[currentUser].addElementToInboxPersonArray(peopleArray[findTheUserYouWantToSendMessageIndex].getName() + " " + peopleArray[findTheUserYouWantToSendMessageIndex].getSurname());
     peopleArray[currentUser].saveInboxMessagesToLocal();
 }
-function back() {
-    document.getElementById("conversationContainer").style.display = 'none';
+function closeInbox() {
+    document.getElementById("inboxOverlay").style.display = 'none';
     document.getElementById("additionalContent").style.display = 'block';
 }
 

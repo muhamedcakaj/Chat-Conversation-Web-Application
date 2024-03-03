@@ -116,6 +116,11 @@ button {
     /* Adjust the font size as needed */
 }
 
+#searchResults {
+    max-height: 700px;
+    overflow: scroll;
+}
+
 .icon {
     width: 25px;
 }
@@ -288,13 +293,15 @@ body {
     border: 1px solid #ddd;
     background-color: #f9f9f9;
 }
-#inboxButton{
+
+#inboxButton {
     width: 80;
     position: relative;
     bottom: 30px;
     right: 18px;
 }
-#inboxh1{
+
+#inboxh1 {
     position: relative;
     bottom: 60px;
 }

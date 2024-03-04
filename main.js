@@ -66,8 +66,7 @@ class Inbox {
         }
     }
 }
-loadDataFromLocal2();
-loadDataFromLocal();
+
 const peopleArray = [];
 const inboxArray = [];
 function main(event) {

@@ -28,7 +28,7 @@ class User {
     }
 }
 class Inbox {
-    constructor(firstUserName, SecondUserName, inboxMessagesArray) {
+    constructor(firstUserName, SecondUserName, inboxMessagesArray = []) {
         this.firstUserName = firstUserName;
         this.SecondUserName = SecondUserName;
         this.inboxMessagesArray = inboxMessagesArray;
@@ -69,6 +69,8 @@ class Inbox {
 
 const peopleArray = [];
 const inboxArray = [];
+loadDataFromLocal();
+loadDataFromLocal2();
 function main(event) {
     event.preventDefault();
     var loginId = document.getElementById("loginId").value;
@@ -205,6 +207,7 @@ function sendMessage() {
 
     inboxArray[inboxArrayIndex].addElementToInboxMessagesArray(message);
     inboxArray[inboxArrayIndex].saveInboxMessagesToLocal();
+    saveDataToLocal();
 
     let inboxArrayFromClassInbox = inboxArray[inboxArrayIndex].getInboxMessagesArray();
     let li = document.createElement('li');
@@ -218,8 +221,10 @@ function sendMessage() {
 
     peopleArray[findTheUserYouWantToSendMessageIndex].addElementToInboxPersonArray(peopleArray[currentUser].getName() + " " + peopleArray[currentUser].getSurname());
     peopleArray[findTheUserYouWantToSendMessageIndex].saveInboxMessagesToLocal();
+    saveDataToLocal();
     peopleArray[currentUser].addElementToInboxPersonArray(peopleArray[findTheUserYouWantToSendMessageIndex].getName() + " " + peopleArray[findTheUserYouWantToSendMessageIndex].getSurname());
     peopleArray[currentUser].saveInboxMessagesToLocal();
+    saveDataToLocal();
 }
 function back() {
     document.getElementById("conversationContainer").style.display = 'none';
@@ -291,7 +296,11 @@ function saveDataToLocal() {
     peopleArray.forEach(user => {
         localStorage.setItem(`inboxPersonArray_${user.getId()}`, JSON.stringify(user.getInboxPersonArray()));
     });
+
+    // Use the consistent key 'inboxData' for inbox messages
+    localStorage.setItem('inboxData', JSON.stringify(inboxArray));
 }
+
 function loadDataFromLocal() {
     const storedData = localStorage.getItem('peopleData');
 
@@ -311,7 +320,7 @@ function loadDataFromLocal() {
     }
 }
 function loadDataFromLocal2() {
-    const storedData = localStorage.getItem('inboxdata');
+    const storedData = localStorage.getItem('inboxData'); // Use the consistent key 'inboxData'
 
     if (storedData) {
         const retrievedArray = JSON.parse(storedData);

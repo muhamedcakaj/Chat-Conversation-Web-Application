@@ -1,9 +1,10 @@
 class User {
-    constructor(id, name, surname, inboxPersonArray = []) {
+    constructor(id, name, surname, inboxPersonArray = [], inboxStatus = []) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.inboxPersonArray = inboxPersonArray;
+        this.inboxStatus = inboxStatus;
     }
     getId() {
         return this.id;
@@ -25,6 +26,17 @@ class User {
     }
     saveInboxMessagesToLocal() {
         localStorage.setItem('inboxPersonArray_' + this.getId(), JSON.stringify(this.inboxPersonArray));
+    }
+    getinboxStatus() {
+        return this.inboxStatus;
+    }
+    addElementToinboxStatus(element) {
+        if (!(this.inboxStatus.includes(element))) {
+            this.inboxStatus.push(element);
+        }
+    }
+    saveinboxStatusToLocal() {
+        localStorage.setItem('inboxStatus_' + this.getId(), JSON.stringify(this.inboxStatus));
     }
 }
 class Inbox {
@@ -95,7 +107,8 @@ function main(event) {
         }
     } else if (signupId) {
         let inboxPersonArray = [];
-        peopleArray.push(new User(signupId, signupName, signupSurname, inboxPersonArray));
+        let inboxStatus = []
+        peopleArray.push(new User(signupId, signupName, signupSurname, inboxPersonArray, inboxStatus));
         saveDataToLocal()
         alert("Log in again to get to the Main Page");
     }
@@ -105,29 +118,43 @@ function openInbox() {
     document.getElementById("inboxOverlay").style.display = 'block';
     let currentUserIndex = findUserIndexInArray(document.getElementById("loggedInId").textContent);
     let arrayOfUser = peopleArray[currentUserIndex].getInboxPersonArray();
+    let arrayOfInboxStatus = peopleArray[currentUserIndex].getinboxStatus();
     for (let i = 0; i < arrayOfUser.length; i++) {
-        let elementAlreadyExists = Array.from(document.getElementById("inboxList").children).some(li => li.id.trim() == arrayOfUser[i]);
-        if (!(elementAlreadyExists)) {
-            let splitarrayOfUserElement = arrayOfUser[i].split(" ");
-            let findUserIndexInArrayWithNameAndSurnamee = findUserIndexInArrayWithNameAndSurname(splitarrayOfUserElement[0], splitarrayOfUserElement[1]);
-            let button = document.createElement("button");
-            button.textContent = "Chat";
-            button.id = peopleArray[findUserIndexInArrayWithNameAndSurnamee].getId();
-            button.onclick = function () {
-                chat(button.id);
+        let splitarrayOfUserElement = arrayOfUser[i].split(" ");
+        var findUserIndexInArrayWithNameAndSurnamee = findUserIndexInArrayWithNameAndSurname(splitarrayOfUserElement[0], splitarrayOfUserElement[1]);
+
+        let inboxStatusIndex = -1;
+        for (let j = 0; j < arrayOfInboxStatus.length; j++) {
+            let split = arrayOfInboxStatus[j].split(" ");
+
+            if (split[0] == peopleArray[findUserIndexInArrayWithNameAndSurnamee].getId()) {
+                inboxStatusIndex = j;
             }
-            let li = document.createElement('li');
-            li.textContent = arrayOfUser[i];
-            li.id = arrayOfUser[i]
-            li.appendChild(button);
-            let ul = document.getElementById("inboxList");
-            ul.appendChild(li);
         }
+        let splitInboxStatus = arrayOfInboxStatus[inboxStatusIndex].split(" ");
+        let button = document.createElement("button");
+        button.textContent = splitInboxStatus[1];
+        button.id = peopleArray[findUserIndexInArrayWithNameAndSurnamee].getId();
+        button.onclick = function () {
+            chat(button.id);
+        }
+        let li = document.createElement('li');
+        li.textContent = arrayOfUser[i];
+        li.id = arrayOfUser[i]
+        li.appendChild(button);
+        let ul = document.getElementById("inboxList");
+        ul.appendChild(li);
+
     }
 }
 function closeInbox() {
     document.getElementById("inboxOverlay").style.display = 'none';
     document.getElementById("additionalContent").style.display = 'block';
+    let unorderedList = document.getElementById("inboxList");
+
+    while (unorderedList.firstChild) {
+        unorderedList.removeChild(unorderedList.firstChild);
+    }
 }
 function chat(idOfThePersonIWantToChat) {
     document.getElementById("inboxOverlay").style.display = "none";
@@ -193,6 +220,10 @@ function startConversation(idOfPersonYouWantToStartConversation) {
     } else {
         let arrayForInboxClass = [];
         inboxArray.push(new Inbox(peopleArray[currentUser].getName(), peopleArray[userYouWantToStartConversationIndexInArray].getName(), arrayForInboxClass));
+        peopleArray[currentUser].addElementToinboxStatus(peopleArray[userYouWantToStartConversationIndexInArray].getId() + " empty ");
+        peopleArray[currentUser].saveinboxStatusToLocal();
+        peopleArray[userYouWantToStartConversationIndexInArray].addElementToinboxStatus(peopleArray[currentUser].getId() + " empty ");
+        peopleArray[userYouWantToStartConversationIndexInArray].saveinboxStatusToLocal();
     }
 }
 function sendMessage() {
@@ -218,12 +249,20 @@ function sendMessage() {
     ul.appendChild(li);
 
     document.getElementById("messageInput").innerHTML = "";
+    let inboxStatus = peopleArray[findTheUserYouWantToSendMessageIndex].getinboxStatus();
+    let inboxStatus2 = peopleArray[currentUser].getinboxStatus();
 
     peopleArray[findTheUserYouWantToSendMessageIndex].addElementToInboxPersonArray(peopleArray[currentUser].getName() + " " + peopleArray[currentUser].getSurname());
     peopleArray[findTheUserYouWantToSendMessageIndex].saveInboxMessagesToLocal();
+    let indexFromInboxStatus = findIndexFromInboxStatus(peopleArray[currentUser].getId(), inboxStatus);
+    inboxStatus[indexFromInboxStatus] = peopleArray[currentUser].getId() + " NewChat";
+    peopleArray[findTheUserYouWantToSendMessageIndex].saveinboxStatusToLocal();
     saveDataToLocal();
     peopleArray[currentUser].addElementToInboxPersonArray(peopleArray[findTheUserYouWantToSendMessageIndex].getName() + " " + peopleArray[findTheUserYouWantToSendMessageIndex].getSurname());
     peopleArray[currentUser].saveInboxMessagesToLocal();
+    let indexFromInboxStatus2 = findIndexFromInboxStatus(peopleArray[findTheUserYouWantToSendMessageIndex].getId(), inboxStatus2);
+    inboxStatus2[indexFromInboxStatus2] = peopleArray[findTheUserYouWantToSendMessageIndex].getId() + " Delivered";
+    peopleArray[currentUser].saveinboxStatusToLocal();
     saveDataToLocal();
 }
 function back() {
@@ -235,11 +274,12 @@ function back() {
     while (unorderedList.firstChild) {
         unorderedList.removeChild(unorderedList.firstChild);
     }
-}
 
-function closeInbox() {
-    document.getElementById("inboxOverlay").style.display = 'none';
-    document.getElementById("additionalContent").style.display = 'block';
+    let unorderedList2 = document.getElementById("inboxList");
+
+    while (unorderedList2.firstChild) {
+        unorderedList2.removeChild(unorderedList2.firstChild);
+    }
 }
 function checkIfUserExistInArray(personId) {
     for (let i of peopleArray) {
@@ -278,6 +318,13 @@ function inboxArrayExists(name, surname) {
     }
     return false;
 }
+function findIndexFromInboxStatus(id, array) {
+    for (let i in array) {
+        if (array[i].includes(id)) {
+            return i;
+        }
+    }
+}
 function hourAndMinutes() {
     var currentDate = new Date();
     var hours = currentDate.getHours();
@@ -315,6 +362,13 @@ function loadDataFromLocal() {
             if (storedInboxPersonArray) {
                 user.inboxPersonArray = JSON.parse(storedInboxPersonArray);
             }
+
+            // Load inboxStatus directly
+            const storedInboxStatus = localStorage.getItem('inboxStatus_' + user.getId());
+            if (storedInboxStatus) {
+                user.inboxStatus = JSON.parse(storedInboxStatus);
+            }
+
             peopleArray.push(user);
         });
     }
@@ -327,7 +381,7 @@ function loadDataFromLocal2() {
 
         inboxArray.length = 0;
         retrievedArray.forEach(item => {
-            const inboxObj = new Inbox(item.firstUserName, item.SecondUserName, item.inboxMessagesArray);
+            const inboxObj = new Inbox(item.firstUserName, item.SecondUserName, item.inboxMessagesArray, item.inboxStatus);
             inboxObj.loadInboxMessagesFromLocal();
             inboxArray.push(inboxObj);
         });
@@ -337,3 +391,15 @@ loadDataFromLocal2();
 loadDataFromLocal();
 //=================================================================================================================================================================================================
 
+function deleteAllData() {
+    // Clear peopleArray
+    peopleArray.splice(0, peopleArray.length);
+
+    // Clear inboxArray
+    inboxArray.splice(0, inboxArray.length);
+
+    // Clear local storage
+    localStorage.removeItem('peopleData');
+    localStorage.removeItem('inboxdata');
+    localStorage.clear();  // Optionally, clear all other items in local storage
+}

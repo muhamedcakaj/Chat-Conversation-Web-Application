@@ -18,6 +18,7 @@ This is a simple web application for a chat conversation system implemented usin
 
 4. **Inbox:**
    - Users can open their inbox to view and reply to messages.
+   - This web-based chat application introduces two key options within the conversation interface— "Delivered" and "New Chat"—providing users with additional functionalities and        enhancing their communication experience.
 
 5. **Message History:**
    - Conversations display a message history with timestamps.
